@@ -1,4 +1,4 @@
-import { getRemoteClient } from '@datavillage-me/api'
+import { getRemoteClient, MASTER_POD_ALIAS } from '@datavillage-me/api'
 import { assert, Required, Optional, instanceOf, oneOf, validURL } from '@muze-nl/assert'
 
 /**
@@ -164,14 +164,14 @@ export async function getProtectedResource(options) {
 
 		const pod = await remoteClient
 		.getUsersServices()
-		.getPodInstance(user.id, datavillageApiUrl)
+		.getPodInstance(user.id, MASTER_POD_ALIAS)
 
         const resource = await pod
 		.getFile(options.resourcePath)
 
 		//TODO: test that pod can convert to jsonld
 		// and make sure to always request jsonld
-		return await resource.content.json()
+		return await resource.content.text()
 	}
     return false
 }

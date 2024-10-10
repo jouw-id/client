@@ -13546,9 +13546,9 @@
     options = Object.assign({}, defaultOptions, options);
     assert3(options, validOptions);
     if (remoteClient && user?.id) {
-      const pod = await remoteClient.getUsersServices().getPodInstance(user.id, datavillageApiUrl);
+      const pod = await remoteClient.getUsersServices().getPodInstance(user.id, MASTER_POD_ALIAS);
       const resource = await pod.getFile(options.resourcePath);
-      return await resource.content.json();
+      return await resource.content.text();
     }
     return false;
   }
