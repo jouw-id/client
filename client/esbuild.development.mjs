@@ -2,7 +2,7 @@ import { build } from "esbuild";
 import { polyfillNode } from "esbuild-plugin-polyfill-node";
 
 build({
-	entryPoints: ["src/jouwid.mjs"],
+	entryPoints: ["src/browser.mjs"],
 	bundle: true,
 	minify: false,
 	sourcemap: true,

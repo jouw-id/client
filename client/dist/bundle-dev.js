@@ -11186,6 +11186,11 @@
     }
   });
 
+  // src/browser.mjs
+  init_dirname();
+  init_buffer2();
+  init_process2();
+
   // src/jouwid.mjs
   init_dirname();
   init_buffer2();
@@ -13590,6 +13595,14 @@
   var validRelativeURL = (url) => {
     let base = new URL("/", window.location.href);
     return validURL(base.href + url);
+  };
+
+  // src/browser.mjs
+  globalThis.jouwid = {
+    login,
+    isLoggedIn,
+    logout,
+    getProtectedResource
   };
 })();
 /*! Bundled license information:
