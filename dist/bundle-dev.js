@@ -65,6 +65,7 @@
     argv0: () => argv0,
     assert: () => assert,
     binding: () => binding,
+    browser: () => browser,
     chdir: () => chdir,
     config: () => config,
     cpuUsage: () => cpuUsage,
@@ -205,7 +206,7 @@
   function listeners(name) {
     return [];
   }
-  var queue, draining, currentQueue, queueIndex, title, arch, platform, env, argv, execArgv, version, versions, emitWarning, binding, umask, cwd, chdir, release, _rawDebug, moduleLoadList, domain, _exiting, config, reallyExit, _kill, cpuUsage, resourceUsage, memoryUsage, kill, exit, openStdin, allowedNodeEnvironmentFlags, features, _fatalExceptions, setUncaughtExceptionCaptureCallback, _tickCallback, _debugProcess, _debugEnd, _startProfilerIdleNotifier, _stopProfilerIdleNotifier, stdout, stderr, stdin, abort, pid, ppid, execPath, debugPort, argv0, _preload_modules, setSourceMapsEnabled, _performance, nowOffset, nanoPerSec, _maxListeners, _events, _eventsCount, addListener, once, off, removeListener, removeAllListeners, emit, prependListener, prependOnceListener, process;
+  var queue, draining, currentQueue, queueIndex, title, arch, platform, env, argv, execArgv, version, versions, emitWarning, binding, umask, cwd, chdir, release, browser, _rawDebug, moduleLoadList, domain, _exiting, config, reallyExit, _kill, cpuUsage, resourceUsage, memoryUsage, kill, exit, openStdin, allowedNodeEnvironmentFlags, features, _fatalExceptions, setUncaughtExceptionCaptureCallback, _tickCallback, _debugProcess, _debugEnd, _startProfilerIdleNotifier, _stopProfilerIdleNotifier, stdout, stderr, stdin, abort, pid, ppid, execPath, debugPort, argv0, _preload_modules, setSourceMapsEnabled, _performance, nowOffset, nanoPerSec, _maxListeners, _events, _eventsCount, addListener, once, off, removeListener, removeAllListeners, emit, prependListener, prependOnceListener, process;
   var init_process = __esm({
     "node_modules/@jspm/core/nodelibs/browser/process.js"() {
       init_dirname();
@@ -222,7 +223,7 @@
       platform = "browser";
       env = {
         PATH: "/usr/bin",
-        LANG: navigator.language + ".UTF-8",
+        LANG: typeof navigator !== "undefined" ? navigator.language + ".UTF-8" : void 0,
         PWD: "/",
         HOME: "/home",
         TMP: "/tmp"
@@ -251,6 +252,7 @@
         headersUrl: "",
         libUrl: ""
       };
+      browser = true;
       _rawDebug = noop;
       moduleLoadList = [];
       domain = {};
@@ -331,6 +333,7 @@
         versions,
         arch,
         platform,
+        browser,
         release,
         _rawDebug,
         moduleLoadList,
@@ -407,13 +410,13 @@
     }
   });
 
-  // node_modules/@jspm/core/nodelibs/browser/buffer.js
+  // node_modules/@jspm/core/nodelibs/browser/chunk-DtuTasat.js
   function dew$2() {
-    if (_dewExec$2) return exports$3;
+    if (_dewExec$2) return exports$2;
     _dewExec$2 = true;
-    exports$3.byteLength = byteLength;
-    exports$3.toByteArray = toByteArray;
-    exports$3.fromByteArray = fromByteArray;
+    exports$2.byteLength = byteLength;
+    exports$2.toByteArray = toByteArray;
+    exports$2.fromByteArray = fromByteArray;
     var lookup = [];
     var revLookup = [];
     var Arr = typeof Uint8Array !== "undefined" ? Uint8Array : Array;
@@ -499,12 +502,12 @@
       }
       return parts.join("");
     }
-    return exports$3;
+    return exports$2;
   }
   function dew$1() {
-    if (_dewExec$1) return exports$2;
+    if (_dewExec$1) return exports$1;
     _dewExec$1 = true;
-    exports$2.read = function(buffer, offset, isLE, mLen, nBytes) {
+    exports$1.read = function(buffer, offset, isLE, mLen, nBytes) {
       var e2, m;
       var eLen = nBytes * 8 - mLen - 1;
       var eMax = (1 << eLen) - 1;
@@ -534,7 +537,7 @@
       }
       return (s ? -1 : 1) * m * Math.pow(2, e2 - mLen);
     };
-    exports$2.write = function(buffer, value, offset, isLE, mLen, nBytes) {
+    exports$1.write = function(buffer, value, offset, isLE, mLen, nBytes) {
       var e2, m, c;
       var eLen = nBytes * 8 - mLen - 1;
       var eMax = (1 << eLen) - 1;
@@ -581,19 +584,19 @@
       }
       buffer[offset + i - d] |= s * 128;
     };
-    return exports$2;
+    return exports$1;
   }
   function dew() {
-    if (_dewExec) return exports$1;
+    if (_dewExec) return exports;
     _dewExec = true;
     const base64 = dew$2();
     const ieee754 = dew$1();
     const customInspectSymbol = typeof Symbol === "function" && typeof Symbol["for"] === "function" ? Symbol["for"]("nodejs.util.inspect.custom") : null;
-    exports$1.Buffer = Buffer3;
-    exports$1.SlowBuffer = SlowBuffer;
-    exports$1.INSPECT_MAX_BYTES = 50;
+    exports.Buffer = Buffer3;
+    exports.SlowBuffer = SlowBuffer;
+    exports.INSPECT_MAX_BYTES = 50;
     const K_MAX_LENGTH = 2147483647;
-    exports$1.kMaxLength = K_MAX_LENGTH;
+    exports.kMaxLength = K_MAX_LENGTH;
     Buffer3.TYPED_ARRAY_SUPPORT = typedArraySupport();
     if (!Buffer3.TYPED_ARRAY_SUPPORT && typeof console !== "undefined" && typeof console.error === "function") {
       console.error("This browser lacks typed array (Uint8Array) support which is required by `buffer` v5.x. Use `buffer` v4.x if you require old browser support.");
@@ -1007,7 +1010,7 @@
     };
     Buffer3.prototype.inspect = function inspect() {
       let str = "";
-      const max = exports$1.INSPECT_MAX_BYTES;
+      const max = exports.INSPECT_MAX_BYTES;
       str = this.toString("hex", 0, max).replace(/(.{2})/g, "$1 ").trim();
       if (this.length > max) str += " ... ";
       return "<Buffer " + str + ">";
@@ -1976,14 +1979,12 @@
       if (value > max || value < min) {
         const n2 = typeof min === "bigint" ? "n" : "";
         let range;
-        if (byteLength2 > 3) {
+        {
           if (min === 0 || min === BigInt(0)) {
             range = `>= 0${n2} and < 2${n2} ** ${(byteLength2 + 1) * 8}${n2}`;
           } else {
             range = `>= -(2${n2} ** ${(byteLength2 + 1) * 8 - 1}${n2}) and < 2 ** ${(byteLength2 + 1) * 8 - 1}${n2}`;
           }
-        } else {
-          range = `>= ${min}${n2} and <= ${max}${n2}`;
         }
         throw new errors.ERR_OUT_OF_RANGE("value", range, value);
       }
@@ -1997,12 +1998,12 @@
     function boundsError(value, length, type) {
       if (Math.floor(value) !== value) {
         validateNumber(value, type);
-        throw new errors.ERR_OUT_OF_RANGE(type || "offset", "an integer", value);
+        throw new errors.ERR_OUT_OF_RANGE("offset", "an integer", value);
       }
       if (length < 0) {
         throw new errors.ERR_BUFFER_OUT_OF_BOUNDS();
       }
-      throw new errors.ERR_OUT_OF_RANGE(type || "offset", `>= ${type ? 1 : 0} and <= ${length}`, value);
+      throw new errors.ERR_OUT_OF_RANGE("offset", `>= ${0} and <= ${length}`, value);
     }
     const INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g;
     function base64clean(str) {
@@ -2116,28 +2117,39 @@
     function BufferBigIntNotDefined() {
       throw new Error("BigInt not supported");
     }
-    return exports$1;
+    return exports;
   }
-  var exports$3, _dewExec$2, exports$2, _dewExec$1, exports$1, _dewExec, exports, Buffer2, INSPECT_MAX_BYTES, kMaxLength;
+  var exports$2, _dewExec$2, exports$1, _dewExec$1, exports, _dewExec;
+  var init_chunk_DtuTasat = __esm({
+    "node_modules/@jspm/core/nodelibs/browser/chunk-DtuTasat.js"() {
+      init_dirname();
+      init_buffer2();
+      init_process2();
+      exports$2 = {};
+      _dewExec$2 = false;
+      exports$1 = {};
+      _dewExec$1 = false;
+      exports = {};
+      _dewExec = false;
+    }
+  });
+
+  // node_modules/@jspm/core/nodelibs/browser/buffer.js
+  var exports2, Buffer2, INSPECT_MAX_BYTES, kMaxLength;
   var init_buffer = __esm({
     "node_modules/@jspm/core/nodelibs/browser/buffer.js"() {
       init_dirname();
       init_buffer2();
       init_process2();
-      exports$3 = {};
-      _dewExec$2 = false;
-      exports$2 = {};
-      _dewExec$1 = false;
-      exports$1 = {};
-      _dewExec = false;
-      exports = dew();
-      exports["Buffer"];
-      exports["SlowBuffer"];
-      exports["INSPECT_MAX_BYTES"];
-      exports["kMaxLength"];
-      Buffer2 = exports.Buffer;
-      INSPECT_MAX_BYTES = exports.INSPECT_MAX_BYTES;
-      kMaxLength = exports.kMaxLength;
+      init_chunk_DtuTasat();
+      exports2 = dew();
+      exports2["Buffer"];
+      exports2["SlowBuffer"];
+      exports2["INSPECT_MAX_BYTES"];
+      exports2["kMaxLength"];
+      Buffer2 = exports2.Buffer;
+      INSPECT_MAX_BYTES = exports2.INSPECT_MAX_BYTES;
+      kMaxLength = exports2.kMaxLength;
     }
   });
 
@@ -2150,11 +2162,11 @@
 
   // node_modules/cross-fetch/dist/browser-ponyfill.js
   var require_browser_ponyfill = __commonJS({
-    "node_modules/cross-fetch/dist/browser-ponyfill.js"(exports2, module) {
+    "node_modules/cross-fetch/dist/browser-ponyfill.js"(exports3, module) {
       init_dirname();
       init_buffer2();
       init_process2();
-      var global2 = typeof self !== "undefined" ? self : exports2;
+      var global2 = typeof self !== "undefined" ? self : exports3;
       var __self__ = function() {
         function F() {
           this.fetch = false;
@@ -2164,7 +2176,7 @@
         return new F();
       }();
       (function(self2) {
-        var irrelevant = function(exports3) {
+        var irrelevant = function(exports4) {
           var support = {
             searchParams: "URLSearchParams" in self2,
             iterable: "Symbol" in self2 && "iterator" in Symbol,
@@ -2521,24 +2533,24 @@
             }
             return new Response(null, { status, headers: { location: url } });
           };
-          exports3.DOMException = self2.DOMException;
+          exports4.DOMException = self2.DOMException;
           try {
-            new exports3.DOMException();
+            new exports4.DOMException();
           } catch (err) {
-            exports3.DOMException = function(message, name) {
+            exports4.DOMException = function(message, name) {
               this.message = message;
               this.name = name;
               var error2 = Error(message);
               this.stack = error2.stack;
             };
-            exports3.DOMException.prototype = Object.create(Error.prototype);
-            exports3.DOMException.prototype.constructor = exports3.DOMException;
+            exports4.DOMException.prototype = Object.create(Error.prototype);
+            exports4.DOMException.prototype.constructor = exports4.DOMException;
           }
           function fetch3(input, init) {
             return new Promise(function(resolve, reject) {
               var request = new Request(input, init);
               if (request.signal && request.signal.aborted) {
-                return reject(new exports3.DOMException("Aborted", "AbortError"));
+                return reject(new exports4.DOMException("Aborted", "AbortError"));
               }
               var xhr = new XMLHttpRequest();
               function abortXhr() {
@@ -2561,7 +2573,7 @@
                 reject(new TypeError("Network request failed"));
               };
               xhr.onabort = function() {
-                reject(new exports3.DOMException("Aborted", "AbortError"));
+                reject(new exports4.DOMException("Aborted", "AbortError"));
               };
               xhr.open(request.method, request.url, true);
               if (request.credentials === "include") {
@@ -2593,30 +2605,30 @@
             self2.Request = Request;
             self2.Response = Response;
           }
-          exports3.Headers = Headers;
-          exports3.Request = Request;
-          exports3.Response = Response;
-          exports3.fetch = fetch3;
-          Object.defineProperty(exports3, "__esModule", { value: true });
-          return exports3;
+          exports4.Headers = Headers;
+          exports4.Request = Request;
+          exports4.Response = Response;
+          exports4.fetch = fetch3;
+          Object.defineProperty(exports4, "__esModule", { value: true });
+          return exports4;
         }({});
       })(__self__);
       __self__.fetch.ponyfill = true;
       delete __self__.fetch.polyfill;
       var ctx = __self__;
-      exports2 = ctx.fetch;
-      exports2.default = ctx.fetch;
-      exports2.fetch = ctx.fetch;
-      exports2.Headers = ctx.Headers;
-      exports2.Request = ctx.Request;
-      exports2.Response = ctx.Response;
-      module.exports = exports2;
+      exports3 = ctx.fetch;
+      exports3.default = ctx.fetch;
+      exports3.fetch = ctx.fetch;
+      exports3.Headers = ctx.Headers;
+      exports3.Request = ctx.Request;
+      exports3.Response = ctx.Response;
+      module.exports = exports3;
     }
   });
 
   // node_modules/rdf-canonize/lib/IdentifierIssuer.js
   var require_IdentifierIssuer = __commonJS({
-    "node_modules/rdf-canonize/lib/IdentifierIssuer.js"(exports2, module) {
+    "node_modules/rdf-canonize/lib/IdentifierIssuer.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -2691,7 +2703,7 @@
 
   // node_modules/setimmediate/setImmediate.js
   var require_setImmediate = __commonJS({
-    "node_modules/setimmediate/setImmediate.js"(exports2) {
+    "node_modules/setimmediate/setImmediate.js"(exports3) {
       init_dirname();
       init_buffer2();
       init_process2();
@@ -2836,13 +2848,13 @@
         }
         attachTo.setImmediate = setImmediate2;
         attachTo.clearImmediate = clearImmediate;
-      })(typeof self === "undefined" ? typeof global === "undefined" ? exports2 : global : self);
+      })(typeof self === "undefined" ? typeof global === "undefined" ? exports3 : global : self);
     }
   });
 
   // node_modules/rdf-canonize/lib/MessageDigest-browser.js
   var require_MessageDigest_browser = __commonJS({
-    "node_modules/rdf-canonize/lib/MessageDigest-browser.js"(exports2, module) {
+    "node_modules/rdf-canonize/lib/MessageDigest-browser.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -2888,7 +2900,7 @@
 
   // node_modules/rdf-canonize/lib/Permuter.js
   var require_Permuter = __commonJS({
-    "node_modules/rdf-canonize/lib/Permuter.js"(exports2, module) {
+    "node_modules/rdf-canonize/lib/Permuter.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -2956,7 +2968,7 @@
 
   // node_modules/rdf-canonize/lib/NQuads.js
   var require_NQuads = __commonJS({
-    "node_modules/rdf-canonize/lib/NQuads.js"(exports2, module) {
+    "node_modules/rdf-canonize/lib/NQuads.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -3274,7 +3286,7 @@
 
   // node_modules/rdf-canonize/lib/URDNA2015.js
   var require_URDNA2015 = __commonJS({
-    "node_modules/rdf-canonize/lib/URDNA2015.js"(exports2, module) {
+    "node_modules/rdf-canonize/lib/URDNA2015.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -3593,7 +3605,7 @@
 
   // node_modules/rdf-canonize/lib/URGNA2012.js
   var require_URGNA2012 = __commonJS({
-    "node_modules/rdf-canonize/lib/URGNA2012.js"(exports2, module) {
+    "node_modules/rdf-canonize/lib/URGNA2012.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -3667,7 +3679,7 @@
 
   // node_modules/rdf-canonize/lib/URDNA2015Sync.js
   var require_URDNA2015Sync = __commonJS({
-    "node_modules/rdf-canonize/lib/URDNA2015Sync.js"(exports2, module) {
+    "node_modules/rdf-canonize/lib/URDNA2015Sync.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -3964,7 +3976,7 @@
 
   // node_modules/rdf-canonize/lib/URGNA2012Sync.js
   var require_URGNA2012Sync = __commonJS({
-    "node_modules/rdf-canonize/lib/URGNA2012Sync.js"(exports2, module) {
+    "node_modules/rdf-canonize/lib/URGNA2012Sync.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4038,7 +4050,7 @@
 
   // node_modules/rdf-canonize/lib/index.js
   var require_lib = __commonJS({
-    "node_modules/rdf-canonize/lib/index.js"(exports2) {
+    "node_modules/rdf-canonize/lib/index.js"(exports3) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4054,19 +4066,19 @@
       }
       function _inputToDataset(input) {
         if (!Array.isArray(input)) {
-          return exports2.NQuads.legacyDatasetToQuads(input);
+          return exports3.NQuads.legacyDatasetToQuads(input);
         }
         return input;
       }
-      exports2.NQuads = require_NQuads();
-      exports2.IdentifierIssuer = require_IdentifierIssuer();
-      exports2._rdfCanonizeNative = function(api) {
+      exports3.NQuads = require_NQuads();
+      exports3.IdentifierIssuer = require_IdentifierIssuer();
+      exports3._rdfCanonizeNative = function(api) {
         if (api) {
           rdfCanonizeNative = api;
         }
         return rdfCanonizeNative;
       };
-      exports2.canonize = async function(input, options) {
+      exports3.canonize = async function(input, options) {
         const dataset = _inputToDataset(input, options);
         if (options.useNative) {
           if (!rdfCanonizeNative) {
@@ -4097,7 +4109,7 @@
           "Invalid RDF Dataset Canonicalization algorithm: " + options.algorithm
         );
       };
-      exports2._canonizeSync = function(input, options) {
+      exports3._canonizeSync = function(input, options) {
         const dataset = _inputToDataset(input, options);
         if (options.useNative) {
           if (!rdfCanonizeNative) {
@@ -4133,7 +4145,7 @@
 
   // node_modules/rdf-canonize/index.js
   var require_rdf_canonize = __commonJS({
-    "node_modules/rdf-canonize/index.js"(exports2, module) {
+    "node_modules/rdf-canonize/index.js"(exports3, module) {
       init_dirname();
       init_buffer2();
       init_process2();
@@ -4143,7 +4155,7 @@
 
   // node_modules/jsonld/lib/types.js
   var require_types = __commonJS({
-    "node_modules/jsonld/lib/types.js"(exports2, module) {
+    "node_modules/jsonld/lib/types.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4164,7 +4176,7 @@
 
   // node_modules/jsonld/lib/graphTypes.js
   var require_graphTypes = __commonJS({
-    "node_modules/jsonld/lib/graphTypes.js"(exports2, module) {
+    "node_modules/jsonld/lib/graphTypes.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4218,7 +4230,7 @@
 
   // node_modules/jsonld/lib/JsonLdError.js
   var require_JsonLdError = __commonJS({
-    "node_modules/jsonld/lib/JsonLdError.js"(exports2, module) {
+    "node_modules/jsonld/lib/JsonLdError.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4243,7 +4255,7 @@
 
   // node_modules/jsonld/lib/util.js
   var require_util = __commonJS({
-    "node_modules/jsonld/lib/util.js"(exports2, module) {
+    "node_modules/jsonld/lib/util.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4502,7 +4514,7 @@
 
   // node_modules/jsonld/lib/constants.js
   var require_constants = __commonJS({
-    "node_modules/jsonld/lib/constants.js"(exports2, module) {
+    "node_modules/jsonld/lib/constants.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4535,7 +4547,7 @@
 
   // node_modules/jsonld/lib/RequestQueue.js
   var require_RequestQueue = __commonJS({
-    "node_modules/jsonld/lib/RequestQueue.js"(exports2, module) {
+    "node_modules/jsonld/lib/RequestQueue.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4572,7 +4584,7 @@
 
   // node_modules/jsonld/lib/url.js
   var require_url = __commonJS({
-    "node_modules/jsonld/lib/url.js"(exports2, module) {
+    "node_modules/jsonld/lib/url.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4778,7 +4790,7 @@
 
   // node_modules/jsonld/lib/documentLoaders/xhr.js
   var require_xhr = __commonJS({
-    "node_modules/jsonld/lib/documentLoaders/xhr.js"(exports2, module) {
+    "node_modules/jsonld/lib/documentLoaders/xhr.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4879,7 +4891,7 @@
 
   // node_modules/jsonld/lib/platform-browser.js
   var require_platform_browser = __commonJS({
-    "node_modules/jsonld/lib/platform-browser.js"(exports2, module) {
+    "node_modules/jsonld/lib/platform-browser.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4908,7 +4920,7 @@
 
   // node_modules/yallist/iterator.js
   var require_iterator = __commonJS({
-    "node_modules/yallist/iterator.js"(exports2, module) {
+    "node_modules/yallist/iterator.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -4925,7 +4937,7 @@
 
   // node_modules/yallist/yallist.js
   var require_yallist = __commonJS({
-    "node_modules/yallist/yallist.js"(exports2, module) {
+    "node_modules/yallist/yallist.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -5297,7 +5309,7 @@
 
   // node_modules/lru-cache/index.js
   var require_lru_cache = __commonJS({
-    "node_modules/lru-cache/index.js"(exports2, module) {
+    "node_modules/lru-cache/index.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -5569,7 +5581,7 @@
 
   // node_modules/jsonld/lib/ResolvedContext.js
   var require_ResolvedContext = __commonJS({
-    "node_modules/jsonld/lib/ResolvedContext.js"(exports2, module) {
+    "node_modules/jsonld/lib/ResolvedContext.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -5598,7 +5610,7 @@
 
   // node_modules/jsonld/lib/ContextResolver.js
   var require_ContextResolver = __commonJS({
-    "node_modules/jsonld/lib/ContextResolver.js"(exports2, module) {
+    "node_modules/jsonld/lib/ContextResolver.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -5809,7 +5821,7 @@
 
   // node_modules/jsonld/lib/NQuads.js
   var require_NQuads2 = __commonJS({
-    "node_modules/jsonld/lib/NQuads.js"(exports2, module) {
+    "node_modules/jsonld/lib/NQuads.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -5820,7 +5832,7 @@
 
   // node_modules/jsonld/lib/events.js
   var require_events = __commonJS({
-    "node_modules/jsonld/lib/events.js"(exports2, module) {
+    "node_modules/jsonld/lib/events.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -5940,7 +5952,7 @@
 
   // node_modules/jsonld/lib/context.js
   var require_context = __commonJS({
-    "node_modules/jsonld/lib/context.js"(exports2, module) {
+    "node_modules/jsonld/lib/context.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -7153,7 +7165,7 @@
 
   // node_modules/jsonld/lib/expand.js
   var require_expand = __commonJS({
-    "node_modules/jsonld/lib/expand.js"(exports2, module) {
+    "node_modules/jsonld/lib/expand.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -8217,7 +8229,7 @@
 
   // node_modules/jsonld/lib/nodeMap.js
   var require_nodeMap = __commonJS({
-    "node_modules/jsonld/lib/nodeMap.js"(exports2, module) {
+    "node_modules/jsonld/lib/nodeMap.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -8443,7 +8455,7 @@
 
   // node_modules/jsonld/lib/flatten.js
   var require_flatten = __commonJS({
-    "node_modules/jsonld/lib/flatten.js"(exports2, module) {
+    "node_modules/jsonld/lib/flatten.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -8473,7 +8485,7 @@
 
   // node_modules/jsonld/lib/fromRdf.js
   var require_fromRdf = __commonJS({
-    "node_modules/jsonld/lib/fromRdf.js"(exports2, module) {
+    "node_modules/jsonld/lib/fromRdf.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -8730,7 +8742,7 @@
 
   // node_modules/canonicalize/lib/canonicalize.js
   var require_canonicalize = __commonJS({
-    "node_modules/canonicalize/lib/canonicalize.js"(exports2, module) {
+    "node_modules/canonicalize/lib/canonicalize.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -8759,7 +8771,7 @@
 
   // node_modules/jsonld/lib/toRdf.js
   var require_toRdf = __commonJS({
-    "node_modules/jsonld/lib/toRdf.js"(exports2, module) {
+    "node_modules/jsonld/lib/toRdf.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -9106,7 +9118,7 @@
 
   // node_modules/jsonld/lib/frame.js
   var require_frame = __commonJS({
-    "node_modules/jsonld/lib/frame.js"(exports2, module) {
+    "node_modules/jsonld/lib/frame.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -9638,7 +9650,7 @@
 
   // node_modules/jsonld/lib/compact.js
   var require_compact = __commonJS({
-    "node_modules/jsonld/lib/compact.js"(exports2, module) {
+    "node_modules/jsonld/lib/compact.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -10541,7 +10553,7 @@
 
   // node_modules/jsonld/lib/JsonLdProcessor.js
   var require_JsonLdProcessor = __commonJS({
-    "node_modules/jsonld/lib/JsonLdProcessor.js"(exports2, module) {
+    "node_modules/jsonld/lib/JsonLdProcessor.js"(exports3, module) {
       "use strict";
       init_dirname();
       init_buffer2();
@@ -10593,7 +10605,7 @@
 
   // node_modules/jsonld/lib/jsonld.js
   var require_jsonld = __commonJS({
-    "node_modules/jsonld/lib/jsonld.js"(exports2, module) {
+    "node_modules/jsonld/lib/jsonld.js"(exports3, module) {
       init_dirname();
       init_buffer2();
       init_process2();
@@ -13517,7 +13529,7 @@
     if (!storage) {
       storage = tokenStorage(options.keepLoggedIn ? "local" : "session");
     }
-    return storage.getItem("id_token");
+    return storage.get("id_token");
   }
   async function logout(options) {
     const defaultOptions = {
@@ -13607,7 +13619,7 @@
 })();
 /*! Bundled license information:
 
-@jspm/core/nodelibs/browser/buffer.js:
+@jspm/core/nodelibs/browser/chunk-DtuTasat.js:
   (*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> *)
 
 rdf-canonize/lib/MessageDigest-browser.js:
