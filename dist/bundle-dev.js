@@ -13529,7 +13529,7 @@
     if (!storage) {
       storage = tokenStorage(options.keepLoggedIn ? "local" : "session");
     }
-    return storage.get("id_token");
+    return storage.get("id_token") ?? false;
   }
   async function logout(options) {
     const defaultOptions = {
