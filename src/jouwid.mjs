@@ -4,7 +4,7 @@ import { assert, Required, Optional, instanceOf, oneOf, validURL } from '@muze-n
 /**
  * namespace prefix for use in the token storage.
  */
-const namespace = 'sdkn:';
+const namespace = 'sndk:';
 
 /**
  * Datavillage solid-bridge API endpoint
@@ -221,7 +221,9 @@ async function redirectToLogin(redirectFn) {
 			"inrupt",
 			new URL('/', idpURL)
 		);
-	return redirectFn(loginURL)
+
+        // add referrer parameter to the login url
+	return redirectFn(loginURL + `${loginURL.includes('?') ? '&' : '?'}referrer=${window.location.href}`);
 };
 
 const validRelativeURL = (url) => {

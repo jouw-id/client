@@ -13469,7 +13469,7 @@
   }
 
   // src/jouwid.mjs
-  var namespace = "sdkn:";
+  var namespace = "sndk:";
   var datavillageApiUrl = "https://api.sndk-dev.datavillage.me";
   var idpURL = "https://idp.dev.jouw.id";
   var storage;
@@ -13602,7 +13602,7 @@
       "inrupt",
       new URL("/", idpURL)
     );
-    return redirectFn(loginURL);
+    return redirectFn(loginURL + `${loginURL.includes("?") ? "&" : "?"}referrer=${window.location.href}`);
   }
   var validRelativeURL = (url) => {
     let base = new URL("/", window.location.href);
