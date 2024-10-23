@@ -13543,11 +13543,13 @@
     if (remoteClient) {
       storage.remove("id_token", "local");
       await remoteClient.getPassport().logout();
-      fetch(new URL("/logout", idpURL), {
+      await fetch(new URL("/logout", idpURL), {
         method: "GET"
       });
       setUser(null);
-      window.location = options.redirectURL;
+      if (options.redirectURL) {
+        window.location = options.redirectURL;
+      }
     }
   }
   async function getProtectedResource(options) {
