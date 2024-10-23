@@ -58,6 +58,8 @@ export async function login(options={})
         keepLoggedIn:  Optional(Boolean)
     };
 
+    assert(options, validOptions);
+
     const defaultOptions = {
         idpRedirect:  (url) => window.location.replace(url),
         silent:       false,
@@ -65,8 +67,6 @@ export async function login(options={})
     };
 
     options = Object.assign({}, defaultOptions, options);
-
-    assert(options, validOptions);
 
     const url = new URL(location.href);
     const searchParams = new URLSearchParams(url.search);
@@ -126,15 +126,19 @@ export function isLoggedIn(options={}) {
 /**
  * 
  */
-export async function logout(options) {
+export async function logout(options)
+{
     const defaultOptions = {
         redirectURL: '/'
     }
+
     const validOptions = {
         redirectURL: Optional(oneOf(validURL, validRelativeURL))
     }
-    options = Object.assign({}, defaultOptions, options)
+
     assert(options, validOptions)
+
+    options = Object.assign({}, defaultOptions, options)
 
     if (remoteClient) {
         storage.remove("id_token", "local");
@@ -151,17 +155,20 @@ export async function logout(options) {
  * Get a resource that is protected, so you must be logged
  * in to access it, and have an access grant.
  */
-export async function getProtectedResource(options) {
+export async function getProtectedResource(options)
+{
 	const defaultOptions = {
 	}
+
 	const validOptions = {
 		resourcePath: Required(String)
 	}
+
+    assert(options, validOptions)
+
 	options = Object.assign({}, defaultOptions, options)
-	assert(options, validOptions)
 
 	if (remoteClient && user?.id) {
-
 		const pod = await remoteClient
 		.getUsersServices()
 		.getPodInstance(user.id, MASTER_POD_ALIAS)
@@ -169,17 +176,22 @@ export async function getProtectedResource(options) {
         const resource = await pod
 		.getFile(options.resourcePath)
 
-		//TODO: test that pod can convert to jsonld
-		// and make sure to always request jsonld
-		return await resource.content.text()
-	}
+        if (resource.metadata.contentType.match(/^application\/(.*\+)?json/)) {
+            return resource.content.json()
+        } else if (resource.metadata.contentType.match(/^text\//)) {
+            return resource.content.text()
+        } else {
+            return resource.content // Blob
+        }
+    }
     return false
 }
 
 /**
  * Token storage helper
  */
-const tokenStorage = function(type) {
+const tokenStorage = function(type)
+{
     const typeStorage = type === 'local' ? localStorage : sessionStorage;
 
     return {
@@ -212,7 +224,8 @@ const tokenStorage = function(type) {
     }
 };
 
-async function redirectToLogin(redirectFn) {
+async function redirectToLogin(redirectFn)
+{
 	const redirectURL = `CODEREDIRECT:${window.location.href}`;
 	const loginURL = await remoteClient
 		?.getPassport()
