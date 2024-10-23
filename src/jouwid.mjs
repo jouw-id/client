@@ -126,7 +126,8 @@ export function isLoggedIn(options={}) {
 /**
  * 
  */
-export async function logout(options) {
+export async function logout(options)
+{
     const defaultOptions = {
         redirectURL: '/'
     }
@@ -169,10 +170,14 @@ export async function getProtectedResource(options) {
         const resource = await pod
 		.getFile(options.resourcePath)
 
-		//TODO: test that pod can convert to jsonld
-		// and make sure to always request jsonld
-		return await resource.content.text()
-	}
+        if (resource.metadata.contentType.match(/^application\/(.*\+)?json/)) {
+            return resource.content.json()
+        } else if (resource.metadata.contentType.match(/^text\//)) {
+            return resource.content.text()
+        } else {
+            return resource.content // Blob
+        }
+    }
     return false
 }
 
