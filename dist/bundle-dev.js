@@ -13484,13 +13484,13 @@
       silent: Optional(Boolean),
       keepLoggedIn: Optional(Boolean)
     };
+    assert3(options, validOptions);
     const defaultOptions = {
       idpRedirect: (url2) => window.location.replace(url2),
       silent: false,
       keepLoggedIn: true
     };
     options = Object.assign({}, defaultOptions, options);
-    assert3(options, validOptions);
     const url = new URL(location.href);
     const searchParams = new URLSearchParams(url.search);
     if (!storage) {
@@ -13538,8 +13538,8 @@
     const validOptions = {
       redirectURL: Optional(oneOf(validURL, validRelativeURL))
     };
-    options = Object.assign({}, defaultOptions, options);
     assert3(options, validOptions);
+    options = Object.assign({}, defaultOptions, options);
     if (remoteClient) {
       storage.remove("id_token", "local");
       await remoteClient.getPassport().logout();
@@ -13555,12 +13555,18 @@
     const validOptions = {
       resourcePath: Required(String)
     };
-    options = Object.assign({}, defaultOptions, options);
     assert3(options, validOptions);
+    options = Object.assign({}, defaultOptions, options);
     if (remoteClient && user?.id) {
       const pod = await remoteClient.getUsersServices().getPodInstance(user.id, MASTER_POD_ALIAS);
       const resource = await pod.getFile(options.resourcePath);
-      return await resource.content.text();
+      if (resource.metadata.contentType.match(/^application\/(.*\+)?json/)) {
+        return resource.content.json();
+      } else if (resource.metadata.contentType.match(/^text\//)) {
+        return resource.content.text();
+      } else {
+        return resource.content;
+      }
     }
     return false;
   }
