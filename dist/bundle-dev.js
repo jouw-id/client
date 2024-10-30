@@ -13988,6 +13988,9 @@
       keepLoggedIn: true
     };
     options = Object.assign({}, defaultOptions, options);
+    const errorHandle = (error2, errorDescription) => {
+      console.log(`${error2} has occured: `, errorDescription);
+    };
     const info = await handleIncomingRedirect({
       restorePreviousSession: options.keepLoggedIn,
       onError: errorHandle
