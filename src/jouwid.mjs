@@ -180,6 +180,93 @@ export async function getProtectedResource(options)
     return false
 }
 
+/**
+ * Add an app url as trusted application
+ */
+export async function trustApp(options)
+{
+    const defaultOptions = {
+    }
+
+    const validOptions = {
+        appUrl: Required(validURL)
+    }
+
+    assert(options, validOptions)
+
+    options = Object.assign({}, defaultOptions, options)
+
+    if (remoteClient && user?.webId) {
+        const body = "_:1 a <http://www.w3.org/ns/solid/terms#InsertDeletePatch>;" +
+            "<http://www.w3.org/ns/solid/terms#inserts> { " +
+            "  <" + user.webId + "> <http://www.w3.org/ns/auth/acl#trustedApp> " + "[<http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Append>, <http://www.w3.org/ns/auth/acl#Read>, <http://www.w3.org/ns/auth/acl#Write>; <http://www.w3.org/ns/auth/acl#origin> <" + options.appUrl + ">] ." +
+            "}."
+
+        const response = await inruptFetch(user.webId, {
+            method: "PATCH",
+            headers : {
+              "Content-Type" : "text/n3"
+            },
+            body : body
+        })
+
+	return response
+    }
+    return false
+}
+
+/**
+ * Add an app url as trusted application
+ */
+export async function revokeApp(options)
+{
+    const defaultOptions = {
+    }
+
+    const validOptions = {
+        appUrl: Required(validURL)
+    }
+
+    assert(options, validOptions)
+
+    options = Object.assign({}, defaultOptions, options)
+
+    if (remoteClient && user?.webId) {
+        const body = `
+@prefix solid: <http://www.w3.org/ns/solid/terms#>.
+@prefix ex: <http://www.example.org/terms#>.
+
+_:patch
+
+      solid:where {
+        <${user.webId}> <http://www.w3.org/ns/auth/acl#trustedApp> ?_g_L61C2150 .
+        ?_g_L61C2150 <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Append> .
+        ?_g_L61C2150 <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Read> .
+        ?_g_L61C2150 <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Write> .
+        ?_g_L61C2150 <http://www.w3.org/ns/auth/acl#origin> <${options.appUrl}> .
+      };
+      solid:deletes {
+        <${user.webId}> <http://www.w3.org/ns/auth/acl#trustedApp> ?_g_L61C2150 .
+        ?_g_L61C2150 <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Append> .
+        ?_g_L61C2150 <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Read> .
+        ?_g_L61C2150 <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Write> .
+        ?_g_L61C2150 <http://www.w3.org/ns/auth/acl#origin> <${options.appUrl}> .
+      };   a solid:InsertDeletePatch .
+`
+
+        const response = await inruptFetch(user.webId, {
+            method: "PATCH",
+            headers : {
+              "Content-Type" : "text/n3"
+            },
+            body : body
+        })
+
+	return response
+    }
+    return false
+}
+
 const validRelativeURL = (url) => {
     let base = new URL('/', window.location.href)
     return validURL(base.href + url)
