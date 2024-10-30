@@ -14074,7 +14074,9 @@
     let pod = null;
     parser.parse(profile, (error2, quad2) => {
       if (quad2.predicate.value == "http://www.w3.org/ns/pim/space#storage") {
-        pod = quad2.object.value;
+        if (!pod) {
+          pod = quad2.object.value;
+        }
       }
     });
     return pod;

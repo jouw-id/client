@@ -182,7 +182,9 @@ function getPod(profile, podAlias) {
     let pod = null
     parser.parse(profile, (error, quad) => {
         if (quad.predicate.value == 'http://www.w3.org/ns/pim/space#storage') {
-            pod = quad.object.value
+            if (!pod) {
+                pod = quad.object.value
+            }
         }
     })
     return pod
