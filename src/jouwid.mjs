@@ -18,6 +18,8 @@ const namespace = 'sndk:';
  */
 const idpURL = "https://idp.dev.jouw.id";
 
+const MASTER_POD_ALIAS = ''; // FIXME: Unsure what this is for
+
 /**
  * variable containing the inrupt client
  */
@@ -68,7 +70,7 @@ export async function login(options={})
         restorePreviousSession: options.keepLoggedIn,
         onError: errorHandle,
     })
-    let user = {}
+    user = {}
     if (info?.webId) {
         user.webId = info.webId
     }
@@ -104,15 +106,15 @@ export async function login(options={})
  * Returns the current idToken, if the user is logged in. False otherwise.
  */
 export function isLoggedIn(options={}) {
-	const validOptions = {
-		keepLoggedIn: Optional(Boolean)
-	}
-	assert(options, validOptions)
+    const validOptions = {
+        keepLoggedIn: Optional(Boolean)
+    }
+    assert(options, validOptions)
 
     if (!remoteClient) {
         remoteClient = getDefaultSession()
     }
-    return remoteClient.isLoggedIn
+    return remoteClient.info.isLoggedIn
 }
 
 /**
@@ -146,25 +148,27 @@ export async function logout(options)
  */
 export async function getProtectedResource(options)
 {
-	const defaultOptions = {
-	}
+    const defaultOptions = {
+    }
 
-	const validOptions = {
-		resourcePath: Required(String)
-	}
+    const validOptions = {
+        resourcePath: Required(String)
+    }
 
     assert(options, validOptions)
 
-	options = Object.assign({}, defaultOptions, options)
+    options = Object.assign({}, defaultOptions, options)
 
-	if (remoteClient && user?.webId) {
-		const profile = await inruptFetch(user.webId) // profile
-        const pod = getPod(profile, MASTER_POD_ALIAS)
+    if (remoteClient && user?.webId) {
+        const profileResponse = await inruptFetch(user.webId) // profile
+        const profile = await profileResponse.text()
+        const pod = await getPod(profile, MASTER_POD_ALIAS)
+
         const url = new URL(options.resourcePath, pod).href
         delete options.resourcePath
         const response = await inruptFetch( url, options)
 
-        const contentType = response.heading.get('content-type')
+        const contentType = response.headers.get('content-type')
         if (contentType.match(/^application\/(.*\+)?json/)) {
             return response.json()
         } else if (contentType.match(/^text\//)) {
@@ -181,11 +185,18 @@ const validRelativeURL = (url) => {
     return validURL(base.href + url)
 }
 
-function getPod(profile, podAlias) {
-    const parser = new Parser();
+async function getPod(profile, podAlias) {
+    const parser = new Parser({ baseIRI: user.webId });
     //FIXME: find the master pod, not just the first pod
     let pod = null
-    parser.parse(profile, (error, quad) => {
+    await parser.parse(profile, (error, quad) => {
+        if (!quad) {
+           return
+        }
+        if (!quad.predicate) {
+           return
+        }
+        // FIXME: quad.predicate does not always exist;
         if (quad.predicate.value == 'http://www.w3.org/ns/pim/space#storage') {
             if (!pod) {
                 pod = quad.object.value
