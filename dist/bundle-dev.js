@@ -14051,7 +14051,9 @@
     if (remoteClient && user?.webId) {
       const profile = await fetch$1(user.webId);
       const pod = getPod(profile, MASTER_POD_ALIAS);
-      const response = await fetch$1(new URL(options.resourcePath, pod).href);
+      const url = new URL(options.resourcePath, pod).href;
+      delete options.resourcePath;
+      const response = await fetch$1(url, options);
       const contentType = response.heading.get("content-type");
       if (contentType.match(/^application\/(.*\+)?json/)) {
         return response.json();

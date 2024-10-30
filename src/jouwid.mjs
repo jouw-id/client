@@ -155,8 +155,9 @@ export async function getProtectedResource(options)
 	if (remoteClient && user?.webId) {
 		const profile = await inruptFetch(user.webId) // profile
         const pod = getPod(profile, MASTER_POD_ALIAS)
-
-        const response = await inruptFetch( new URL(options.resourcePath, pod).href )
+        const url = new URL(options.resourcePath, pod).href
+        delete options.resourcePath
+        const response = await inruptFetch( url, options)
 
         const contentType = response.heading.get('content-type')
         if (contentType.match(/^application\/(.*\+)?json/)) {
