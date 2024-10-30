@@ -61,13 +61,14 @@ export async function login(options={})
     options = Object.assign({}, defaultOptions, options);
 
     const errorHandle = (error, errorDescription) => {
-        console.log(`${error} has occured: `, errorDescription);
+        console.error(`${error} has occured: `, errorDescription);
     }
-    
+
     const info = await handleIncomingRedirect({
         restorePreviousSession: options.keepLoggedIn,
         onError: errorHandle,
     })
+    let user = {}
     if (info?.webId) {
         user.webId = info.webId
     }

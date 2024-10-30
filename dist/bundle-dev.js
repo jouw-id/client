@@ -13989,22 +13989,23 @@
     };
     options = Object.assign({}, defaultOptions, options);
     const errorHandle = (error2, errorDescription) => {
-      console.log(`${error2} has occured: `, errorDescription);
+      console.error(`${error2} has occured: `, errorDescription);
     };
     const info = await handleIncomingRedirect({
       restorePreviousSession: options.keepLoggedIn,
       onError: errorHandle
     });
+    let user2 = {};
     if (info?.webId) {
-      user.webId = info.webId;
+      user2.webId = info.webId;
     }
     if (!remoteClient) {
       remoteClient = getDefaultSession();
       if (remoteClient?.info?.webId) {
-        user.webId = remoteClient.info.webId;
+        user2.webId = remoteClient.info.webId;
       }
     }
-    if (!user.webId && !options.silent) {
+    if (!user2.webId && !options.silent) {
       if (options.idpRedirect) {
         options.idpRedirect();
       } else {
@@ -14016,7 +14017,7 @@
         });
       }
     }
-    return user;
+    return user2;
   }
   function isLoggedIn2(options = {}) {
     const validOptions = {
