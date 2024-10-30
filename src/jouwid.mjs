@@ -1,5 +1,12 @@
-import { getRemoteClient, MASTER_POD_ALIAS } from '@datavillage-me/api'
 import { assert, Required, Optional, instanceOf, oneOf, validURL } from '@muze-nl/assert'
+import {
+  login as inruptLogin,
+  logout as inruptLogout,
+  handleIncomingRedirect,
+  fetch as inruptFetch,
+  getDefaultSession,
+} from "@inrupt/solid-client-authn-browser";
+import { Parser } from "n3";
 
 /**
  * namespace prefix for use in the token storage.
@@ -7,29 +14,14 @@ import { assert, Required, Optional, instanceOf, oneOf, validURL } from '@muze-n
 const namespace = 'sndk:';
 
 /**
- * Datavillage solid-bridge API endpoint
- */
-const datavillageApiUrl = "https://api.sndk-dev.datavillage.me";
-
-/**
  * OIDC Issuer url of jouw.id
  */
 const idpURL = "https://idp.dev.jouw.id";
 
 /**
- * storage variable containing the token storage api later
- */
-let storage;
-
-/**
- * variable containing the datavillage client
+ * variable containing the inrupt client
  */
 let remoteClient
-
-/**
- * idToken variable containing current users idToken, after login
- */
-let idToken;
 
 /**
  * user variable containing current users information, after login
@@ -53,6 +45,7 @@ export async function login(options={})
     const validOptions = {
         client_id:     Required(String),
         client_secret: Required(String),
+        redirect_url:  Required(validURL),
         idpRedirect:   Optional(instanceOf(Function)),
         silent:        Optional(Boolean),
         keepLoggedIn:  Optional(Boolean)
@@ -61,48 +54,42 @@ export async function login(options={})
     assert(options, validOptions);
 
     const defaultOptions = {
-        idpRedirect:  (url) => window.location.replace(url),
         silent:       false,
         keepLoggedIn: true
     };
 
     options = Object.assign({}, defaultOptions, options);
 
-    const url = new URL(location.href);
-    const searchParams = new URLSearchParams(url.search);
-    if (!storage) {
-        storage = tokenStorage(options.keepLoggedIn ? 'local' : 'session');
-    }
-
-    const forwardedToken = searchParams.get("token");
-    if (forwardedToken) {
-        storage.set("id_token", forwardedToken, "local");
-    }
-
-    const storedToken = storage.get("id_token", "", "local");
-    if (storedToken && storedToken !== idToken) {
-        idToken = storedToken;
+    const info = await handleIncomingRedirect({
+        restorePreviousSession: options.keepLoggedIn,
+        onError: errorHandle,
+    })
+    if (info?.webId) {
+        user.webId = info.webId
     }
 
     if (!remoteClient) {
-        const newClient = getRemoteClient(
-            datavillageApiUrl,
-            idToken ?? undefined,
-            "AuthBearer"
-        );
-        remoteClient = newClient;
+        remoteClient = getDefaultSession()
+        if (remoteClient?.info?.webId) {
+            user.webId = remoteClient.info.webId
+        }
     }
 
-    if (!remoteClient) {
-       return false;
-    }
+    // user = await remoteClient
+    // .getPassport()
+    // .getCurrentUser();
 
-    user = await remoteClient
-    .getPassport()
-    .getCurrentUser();
-
-    if (!user && !options.silent) {
-         user = await redirectToLogin(options.idpRedirect);
+    if (!user.webId && !options.silent) {
+        if (options.idpRedirect) {
+            options.idpRedirect() //FIXME: set correct url here
+        } else {
+            inruptLogin({
+              redirectUrl: options.redirect_url,
+              oidcIssuer: idpURL,
+              clientId: options.client_id,
+              clientSecret: options.client_secret,
+            });
+        }
     }
 
     return user;
@@ -117,10 +104,10 @@ export function isLoggedIn(options={}) {
 	}
 	assert(options, validOptions)
 
-    if (!storage) {
-        storage = tokenStorage(options.keepLoggedIn ? 'local' : 'session');
+    if (!remoteClient) {
+        remoteClient = getDefaultSession()
     }
-    return storage.get("id_token") ?? false;
+    return remoteClient.isLoggedIn
 }
 
 /**
@@ -129,26 +116,21 @@ export function isLoggedIn(options={}) {
 export async function logout(options)
 {
     const defaultOptions = {
-        redirectURL: '/'
+        redirect_url: '/'
     }
 
     const validOptions = {
-        redirectURL: Optional(oneOf(validURL, validRelativeURL))
+        redirect_url: Optional(oneOf(validURL, validRelativeURL))
     }
 
     assert(options, validOptions)
 
     options = Object.assign({}, defaultOptions, options)
 
-    if (remoteClient) {
-        storage.remove("id_token", "local");
-        await remoteClient.getPassport().logout();
-        await fetch(new URL('/logout', idpURL), {
-            method: "GET",
-        });
-        setUser(null);
-        if (options.redirectURL) {
-            window.location = options.redirectURL;
+    if (isLoggedIn()) {
+        inruptLogout();
+        if (options.redirect_url) {
+            window.location = options.redirect_url;
         }
     }
 }
@@ -170,78 +152,37 @@ export async function getProtectedResource(options)
 
 	options = Object.assign({}, defaultOptions, options)
 
-	if (remoteClient && user?.id) {
-		const pod = await remoteClient
-		.getUsersServices()
-		.getPodInstance(user.id, MASTER_POD_ALIAS)
+	if (remoteClient && user?.webId) {
+		const profile = await inruptFetch(user.webId) // profile
+        const pod = getPod(profile, MASTER_POD_ALIAS)
 
-        const resource = await pod
-		.getFile(options.resourcePath)
+        const response = await inruptFetch( new URL(options.resourcePath, pod).href )
 
-        if (resource.metadata.contentType.match(/^application\/(.*\+)?json/)) {
-            return resource.content.json()
-        } else if (resource.metadata.contentType.match(/^text\//)) {
-            return resource.content.text()
+        const contentType = response.heading.get('content-type')
+        if (contentType.match(/^application\/(.*\+)?json/)) {
+            return response.json()
+        } else if (contentType.match(/^text\//)) {
+            return response.text()
         } else {
-            return resource.content // Blob
+            return response.blob()
         }
     }
     return false
 }
 
-/**
- * Token storage helper
- */
-const tokenStorage = function(type)
-{
-    const typeStorage = type === 'local' ? localStorage : sessionStorage;
-
-    return {
-        get(key, defaultValue) {
-            try {
-                const value = typeStorage.getItem(namespace + key);
-                if (value === null) {
-                    return defaultValue;
-                }
-                return JSON.parse(value);
-            } catch (e) {
-                console.warn(`Reading from ${type}Storage failed`, e);
-                return defaultValue;
-            }
-        },
-        set(key, value) {
-            try {
-                typeStorage.setItem(namespace + key, JSON.stringify(value));
-            } catch (e) {
-                console.warn(`Saving to ${type}Storage failed`, e);
-            }
-        },
-        remove(key) {
-            try {
-                typeStorage.removeItem(namespace + key);
-            } catch (e) {
-                console.warn(`Removing from ${type}Storage failed`, e);
-            }
-        }
-    }
-};
-
-async function redirectToLogin(redirectFn)
-{
-	const redirectURL = `CODEREDIRECT:${window.location.href}`;
-	const loginURL = await remoteClient
-		?.getPassport()
-		?.getAuthenticationUrl(
-			redirectURL,
-			"inrupt",
-			new URL('/', idpURL)
-		);
-
-        // add referrer parameter to the login url
-	return redirectFn(loginURL + `${loginURL.includes('?') ? '&' : '?'}referrer=${window.location.href}`);
-};
-
 const validRelativeURL = (url) => {
     let base = new URL('/', window.location.href)
     return validURL(base.href + url)
+}
+
+function getPod(profile, podAlias) {
+    const parser = new Parser();
+    //FIXME: find the master pod, not just the first pod
+    let pod = null
+    parser.parse(profile, (error, quad) => {
+        if (quad.predicate.value == 'http://www.w3.org/ns/pim/space#storage') {
+            pod = quad.object.value
+        }
+    })
+    return pod
 }
