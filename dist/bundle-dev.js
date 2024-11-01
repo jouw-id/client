@@ -2546,7 +2546,7 @@
             exports4.DOMException.prototype = Object.create(Error.prototype);
             exports4.DOMException.prototype.constructor = exports4.DOMException;
           }
-          function fetch3(input, init) {
+          function fetch2(input, init) {
             return new Promise(function(resolve, reject) {
               var request = new Request(input, init);
               if (request.signal && request.signal.aborted) {
@@ -2598,9 +2598,9 @@
               xhr.send(typeof request._bodyInit === "undefined" ? null : request._bodyInit);
             });
           }
-          fetch3.polyfill = true;
+          fetch2.polyfill = true;
           if (!self2.fetch) {
-            self2.fetch = fetch3;
+            self2.fetch = fetch2;
             self2.Headers = Headers;
             self2.Request = Request;
             self2.Response = Response;
@@ -2608,7 +2608,7 @@
           exports4.Headers = Headers;
           exports4.Request = Request;
           exports4.Response = Response;
-          exports4.fetch = fetch3;
+          exports4.fetch = fetch2;
           Object.defineProperty(exports4, "__esModule", { value: true });
           return exports4;
         }({});
@@ -13546,9 +13546,6 @@
       storage.remove("id_token", "local");
       await remoteClient.getPassport().logout();
       if (options.logoutIDP) {
-        await fetch(new URL("/logout", idpURL), {
-          method: "GET"
-        });
       }
       user = null;
       if (options.redirectURL) {

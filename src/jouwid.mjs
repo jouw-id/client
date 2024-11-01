@@ -151,9 +151,10 @@ export async function logout(options)
         storage.remove("id_token", "local");
         await remoteClient.getPassport().logout();
         if (options.logoutIDP) {
-            await fetch(new URL('/logout', idpURL), {
-                method: "GET",
-            });
+            // FIXME: do this through the remoteClient instead
+            // await fetch(new URL('/logout', idpURL), {
+            //     method: "GET",
+            // });
         }
         user = null
         if (options.redirectURL) {
