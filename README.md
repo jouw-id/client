@@ -64,6 +64,25 @@ Alternatively, when using a CDN:
 </script>
 ```
 
+## Development usage
+
+If you just want to be able to step through the code, you can use the development build from the cdn like this:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@jouw-id/client@0.1.4/dist/bundle-dev.js"></script>
+```
+
+This includes a source map.
+
+If you want to use the development server `https://idp.dev.jouw.id/`, you must call the `useDevServers()` method before any other:
+
+```javascript
+jouwid.useDevServers()
+await jouwid.login({
+	...
+})
+```
+
 ## API
 
 ### login()
