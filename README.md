@@ -84,7 +84,23 @@ This function returns true if the user is logged in. It takes an options object 
 
 This function will logout the user in the browser and from the jouw.id provider as well. It takes an options object as first parameter. Available options are:
 - redirectURL: Optional. A url that is used to redirect the user after logging out.
+- lougoutIDP: Optional. Boolean. Default is false. If true, the user will also be logged out in the identity provider - this will log the user out on all websites using this identity provider.
 
+To use this function, you must first have called login(). This will make sure the required information (who the user is) is available to allow logout() to function, e.g:
+
+```javascript
+await jouwid.login({
+	client_id: ...,
+	client_secret: ...,
+	silent: true
+})
+
+// sometime later
+
+await jouwid.logout({
+	logoutIDP: true // logout the user everywhere
+})
+```
 
 ### getProtectedResource()
 
