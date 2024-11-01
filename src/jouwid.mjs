@@ -37,8 +37,8 @@ let idToken;
 let user;
 
 export function useDevServers() {
-    idpDevURL = "https://idp.dev.jouw.id";
-    datavillageApiDevUrl = "https://api.sndk-dev.datavillage.me";
+    idpURL = "https://idp.dev.jouw.id";
+    datavillageApiUrl = "https://api.sndk-dev.datavillage.me";
 }
 
 /**
