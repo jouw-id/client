@@ -75,14 +75,31 @@ This triggers the login flow, using the Solid-OIDC (OpenID Connect) protocol. Yo
 - silent: Optional. Boolean. Defaults to false. If true, the user won't be redirected to a login screen if the user is not logged in.
 - idpRedirect: Optional. Function: <Promise>(url) => {}. If set, this function will be called when the user must log in to jouw.id, with the url to do so. The idpRedirect function can then handle this as required, e.g. open a popup or iframe to log in. On resolve, the user should be logged in.
 
+Calling this function will always log the user back in, if the user is still logged in on https://idp.jouw.id/, even if you called logout() locally before. To make sure you don't login a user that has specifically logged out, use `isLoggedIn()` before calling `login({silent:true})`.
+
 ### isLoggedIn()
 
-This function returns true if the user is logged in. It takes an options object as first parameter. The only option you can specify is:
+This function returns true if the user is logged in locally. It takes an options object as first parameter. The only option you can specify is:
 - keepLoggedIn: Optional. Boolean. If true, the login status is checked against localStorage, otherwise against sessionStorage. Keep this the same as in the `login()` call.
+
+Note: even if `isLoggedIn()` returns `true`, you will still have to call `login()` to make sure that all the users information is available, before calling `getProtectedResource()`. All that `isLoggedIn(): true` means is that the user has logged in previously on this website / domain. So:
+
+```javascript
+if (jouwid.isLoggedIn({keepLoggedIn:true})) {
+	// previously logged in, so resume
+	await jouwid.login({
+		...
+		keepLoggedIn: true
+	})
+	let resource = await jouwid.getProtectedResource({...})
+}
+```
+
+Only after calling `logout()` will `isLoggedIn()` return false. By checking `isLoggedIn()` before calling `login()`, you can logout the user locally. Calling `login({silent:true})` wil automatically log the user back in, if he/she isn't loggout out at idp.jouw.id.
 
 ### logout()
 
-This function will logout the user in the browser and from the jouw.id provider as well. It takes an options object as first parameter. Available options are:
+This function will logout the user in the browser and optionally from the jouw.id provider as well. It takes an options object as first parameter. Available options are:
 - redirectURL: Optional. A url that is used to redirect the user after logging out.
 - lougoutIDP: Optional. Boolean. Default is false. If true, the user will also be logged out in the identity provider - this will log the user out on all websites using this identity provider.
 
