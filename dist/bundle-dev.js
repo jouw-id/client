@@ -13533,19 +13533,23 @@
   }
   async function logout(options) {
     const defaultOptions = {
-      redirectURL: "/"
+      redirectURL: "/",
+      logoutIDP: false
     };
     const validOptions = {
-      redirectURL: Optional(oneOf(validURL, validRelativeURL))
+      redirectURL: Optional(oneOf(validURL, validRelativeURL)),
+      logoutIDP: Optional(Boolean)
     };
     assert3(options, validOptions);
     options = Object.assign({}, defaultOptions, options);
     if (remoteClient) {
       storage.remove("id_token", "local");
       await remoteClient.getPassport().logout();
-      await fetch(new URL("/logout", idpURL), {
-        method: "GET"
-      });
+      if (options.logoutIDP) {
+        await fetch(new URL("/logout", idpURL), {
+          method: "GET"
+        });
+      }
       setUser(null);
       if (options.redirectURL) {
         window.location = options.redirectURL;
