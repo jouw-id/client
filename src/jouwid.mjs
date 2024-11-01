@@ -9,12 +9,12 @@ const namespace = 'sndk:';
 /**
  * Datavillage solid-bridge API endpoint
  */
-const datavillageApiUrl = "https://api.sndk-dev.datavillage.me";
+let datavillageApiUrl = "https://api.sndk.datavillage.me";
 
 /**
  * OIDC Issuer url of jouw.id
  */
-const idpURL = "https://idp.dev.jouw.id";
+let idpURL = "https://idp.jouw.id";
 
 /**
  * storage variable containing the token storage api later
@@ -35,6 +35,11 @@ let idToken;
  * user variable containing current users information, after login
  */
 let user;
+
+export function useDevServers() {
+    idpDevURL = "https://idp.dev.jouw.id";
+    datavillageApiDevUrl = "https://api.sndk-dev.datavillage.me";
+}
 
 /**
  * login() makes sure the user is logged in. If the user is not yet logged in,
