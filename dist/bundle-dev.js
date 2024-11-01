@@ -13470,8 +13470,8 @@
 
   // src/jouwid.mjs
   var namespace = "sndk:";
-  var datavillageApiUrl = "https://api.sndk-dev.datavillage.me";
-  var idpURL = "https://idp.dev.jouw.id";
+  var datavillageApiUrl = "https://api.sndk.datavillage.me";
+  var idpURL = "https://idp.jouw.id";
   var storage;
   var remoteClient;
   var idToken;
