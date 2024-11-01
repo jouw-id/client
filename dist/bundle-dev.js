@@ -13550,7 +13550,7 @@
           method: "GET"
         });
       }
-      setUser(null);
+      user = null;
       if (options.redirectURL) {
         window.location = options.redirectURL;
       }
