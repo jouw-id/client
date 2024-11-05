@@ -149,6 +149,7 @@ export async function logout(options)
 
     if (remoteClient) {
         storage.remove("id_token", "local");
+        storage.remove("id_token", "session");
         await remoteClient.getPassport().logout();
         if (options.logoutIDP) {
             // FIXME: do this through the remoteClient instead
