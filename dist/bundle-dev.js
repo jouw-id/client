@@ -13544,6 +13544,7 @@
     options = Object.assign({}, defaultOptions, options);
     if (remoteClient) {
       storage.remove("id_token", "local");
+      storage.remove("id_token", "session");
       await remoteClient.getPassport().logout();
       if (options.logoutIDP) {
       }
