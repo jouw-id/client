@@ -81,10 +81,10 @@ export async function login(options={})
 
     const forwardedToken = searchParams.get("token");
     if (forwardedToken) {
-        storage.set("id_token", forwardedToken, "local");
+        storage.set("id_token", forwardedToken);
     }
 
-    const storedToken = storage.get("id_token", "", "local");
+    const storedToken = storage.get("id_token", "");
     if (storedToken && storedToken !== idToken) {
         idToken = storedToken;
     }
