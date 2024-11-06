@@ -81,10 +81,10 @@ export async function login(options={})
 
     const forwardedToken = searchParams.get("token");
     if (forwardedToken) {
-        storage.set("id_token", forwardedToken, "local");
+        storage.set("id_token", forwardedToken);
     }
 
-    const storedToken = storage.get("id_token", "", "local");
+    const storedToken = storage.get("id_token", "");
     if (storedToken && storedToken !== idToken) {
         idToken = storedToken;
     }
@@ -117,10 +117,10 @@ export async function login(options={})
  * Returns the current idToken, if the user is logged in. False otherwise.
  */
 export function isLoggedIn(options={}) {
-	const validOptions = {
-		keepLoggedIn: Optional(Boolean)
-	}
-	assert(options, validOptions)
+    const validOptions = {
+        keepLoggedIn: Optional(Boolean)
+    }
+    assert(options, validOptions)
 
     if (!storage) {
         storage = tokenStorage(options.keepLoggedIn ? 'local' : 'session');
@@ -147,9 +147,14 @@ export async function logout(options)
 
     options = Object.assign({}, defaultOptions, options)
 
+    storage.remove("id_token");
+    storage.remove("jouwid-overlay-closed");
+    localStorage.removeItem(namespace + "id_token");
+    localStorage.removeItem(namespace + "jouwid-overlay-closed");
+    sessionStorage.removeItem(namespace + "id_token");
+    sessionStorage.removeItem(namespace + "jouwid-overlay-closed");
+
     if (remoteClient) {
-        storage.remove("id_token", "local");
-        storage.remove("id_token", "session");
         await remoteClient.getPassport().logout();
         if (options.logoutIDP) {
             // FIXME: do this through the remoteClient instead
