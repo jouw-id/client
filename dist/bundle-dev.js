@@ -13498,9 +13498,9 @@
     }
     const forwardedToken = searchParams.get("token");
     if (forwardedToken) {
-      storage.set("id_token", forwardedToken, "local");
+      storage.set("id_token", forwardedToken);
     }
-    const storedToken = storage.get("id_token", "", "local");
+    const storedToken = storage.get("id_token", "");
     if (storedToken && storedToken !== idToken) {
       idToken = storedToken;
     }
@@ -13542,9 +13542,13 @@
     };
     assert3(options, validOptions);
     options = Object.assign({}, defaultOptions, options);
+    storage.remove("id_token");
+    storage.remove("jouwid-overlay-closed");
+    localStorage.removeItem(namespace + "id_token");
+    localStorage.removeItem(namespace + "jouwid-overlay-closed");
+    sessionStorage.removeItem(namespace + "id_token");
+    sessionStorage.removeItem(namespace + "jouwid-overlay-closed");
     if (remoteClient) {
-      storage.remove("id_token", "local");
-      storage.remove("id_token", "session");
       await remoteClient.getPassport().logout();
       if (options.logoutIDP) {
       }
