@@ -147,9 +147,14 @@ export async function logout(options)
 
     options = Object.assign({}, defaultOptions, options)
 
+    storage.remove("id_token");
+    storage.remove("jouwid-overlay-closed");
+    localStorage.removeItem(namespace + "id_token");
+    localStorage.removeItem(namespace + "jouwid-overlay-closed");
+    sessionStorage.removeItem(namespace + "id_token");
+    sessionStorage.removeItem(namespace + "jouwid-overlay-closed");
+
     if (remoteClient) {
-        storage.remove("id_token", "local");
-        storage.remove("id_token", "session");
         await remoteClient.getPassport().logout();
         if (options.logoutIDP) {
             // FIXME: do this through the remoteClient instead
