@@ -13543,11 +13543,10 @@
     assert3(options, validOptions);
     options = Object.assign({}, defaultOptions, options);
     storage.remove("id_token");
-    storage.remove("jouwid-overlay-closed");
     localStorage.removeItem(namespace + "id_token");
-    localStorage.removeItem(namespace + "jouwid-overlay-closed");
+    localStorage.removeItem("jouwid-overlay-closed");
     sessionStorage.removeItem(namespace + "id_token");
-    sessionStorage.removeItem(namespace + "jouwid-overlay-closed");
+    sessionStorage.removeItem("jouwid-overlay-closed");
     if (remoteClient) {
       await remoteClient.getPassport().logout();
       if (options.logoutIDP) {
