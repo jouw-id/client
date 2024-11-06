@@ -117,10 +117,10 @@ export async function login(options={})
  * Returns the current idToken, if the user is logged in. False otherwise.
  */
 export function isLoggedIn(options={}) {
-	const validOptions = {
-		keepLoggedIn: Optional(Boolean)
-	}
-	assert(options, validOptions)
+    const validOptions = {
+        keepLoggedIn: Optional(Boolean)
+    }
+    assert(options, validOptions)
 
     if (!storage) {
         storage = tokenStorage(options.keepLoggedIn ? 'local' : 'session');
