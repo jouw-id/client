@@ -200,7 +200,7 @@ export async function getProtectedResource(options)
     		.getFile(options.resourcePath)
 
             if (resource.metadata.contentType.match(/^application\/(.*\+)?json/)) {
-                return resource.content.json()
+                return JSON.parse(await resource.content.text())
             } else if (resource.metadata.contentType.match(/^text\//)) {
                 return resource.content.text()
             } else {

@@ -13574,7 +13574,7 @@
         const pod = await remoteClient.getUsersServices().getPodInstance(user.id, MASTER_POD_ALIAS);
         const resource = await pod.getFile(options.resourcePath);
         if (resource.metadata.contentType.match(/^application\/(.*\+)?json/)) {
-          return resource.content.json();
+          return JSON.parse(await resource.content.text());
         } else if (resource.metadata.contentType.match(/^text\//)) {
           return resource.content.text();
         } else {
