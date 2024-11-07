@@ -1,6 +1,6 @@
 {
   "name": "@jouw-id/client",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "client for jouw.id",
   "type": "module",
   "source": [

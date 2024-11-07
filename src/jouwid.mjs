@@ -181,24 +181,33 @@ export async function getProtectedResource(options)
 		resourcePath: Required(String)
 	}
 
+    if (typeof options == 'string') {
+        options = {
+            resourcePath: options
+        }
+    }
+
     assert(options, validOptions)
 
 	options = Object.assign({}, defaultOptions, options)
 
 	if (remoteClient && user?.id) {
-		const pod = await remoteClient
-		.getUsersServices()
-		.getPodInstance(user.id, MASTER_POD_ALIAS)
+        try {
+    		const pod = await remoteClient
+    		.getUsersServices()
+    		.getPodInstance(user.id, MASTER_POD_ALIAS)
+            const resource = await pod
+    		.getFile(options.resourcePath)
 
-        const resource = await pod
-		.getFile(options.resourcePath)
-
-        if (resource.metadata.contentType.match(/^application\/(.*\+)?json/)) {
-            return resource.content.json()
-        } else if (resource.metadata.contentType.match(/^text\//)) {
-            return resource.content.text()
-        } else {
-            return resource.content // Blob
+            if (resource.metadata.contentType.match(/^application\/(.*\+)?json/)) {
+                return resource.content.json()
+            } else if (resource.metadata.contentType.match(/^text\//)) {
+                return resource.content.text()
+            } else {
+                return resource.content // Blob
+            }
+        } catch(e) {
+            console.error(e)
         }
     }
     return false
