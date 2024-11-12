@@ -83,7 +83,7 @@ export async function login(options={})
     if (forwardedToken) {
         storage.set("id_token", forwardedToken);
         let cleanURL = new URL(window.location.href)
-        cleanURL.search = ''
+        cleanURL.searchParams.delete('token')
         history.replaceState({}, '', cleanURL.href)
     }
 
