@@ -13499,6 +13499,9 @@
     const forwardedToken = searchParams.get("token");
     if (forwardedToken) {
       storage.set("id_token", forwardedToken);
+      let cleanURL = new URL(window.location.href);
+      cleanURL.search = "";
+      history.replaceState({}, "", cleanURL.href);
     }
     const storedToken = storage.get("id_token", "");
     if (storedToken && storedToken !== idToken) {
@@ -13526,6 +13529,10 @@
       keepLoggedIn: Optional(Boolean)
     };
     assert3(options, validOptions);
+    let params = new URLSearchParams(window.location.search);
+    if (params.has("token")) {
+      return true;
+    }
     if (!storage) {
       storage = tokenStorage(options.keepLoggedIn ? "local" : "session");
     }

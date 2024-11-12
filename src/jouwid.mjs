@@ -82,6 +82,9 @@ export async function login(options={})
     const forwardedToken = searchParams.get("token");
     if (forwardedToken) {
         storage.set("id_token", forwardedToken);
+        let cleanURL = new URL(window.location.href)
+        cleanURL.search = ''
+        history.replaceState({}, '', cleanURL.href)
     }
 
     const storedToken = storage.get("id_token", "");
@@ -97,7 +100,7 @@ export async function login(options={})
         );
         remoteClient = newClient;
     }
-
+    
     if (!remoteClient) {
        return false;
     }
@@ -122,6 +125,10 @@ export function isLoggedIn(options={}) {
     }
     assert(options, validOptions)
 
+    let params = new URLSearchParams(window.location.search)
+    if (params.has('token')) {
+        return true // make sure that isLoggedIn returns true during login process
+    }
     if (!storage) {
         storage = tokenStorage(options.keepLoggedIn ? 'local' : 'session');
     }
