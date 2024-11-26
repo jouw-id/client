@@ -74,7 +74,11 @@ export async function login(options={})
     options = Object.assign({}, defaultOptions, options);
 
     const url = new URL(location.href);
-    const searchParams = new URLSearchParams(url.search);
+    let searchParams = new URLSearchParams(url.search);
+    if (!searchParams.has('token')) {
+        let base = new URL(document.baseURI)
+        searchParams = new URLSearchParams(base.search) // safari private window workaround
+    }
     if (!storage) {
         storage = tokenStorage(options.keepLoggedIn ? 'local' : 'session');
     }
