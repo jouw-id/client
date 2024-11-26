@@ -126,6 +126,10 @@ export function isLoggedIn(options={}) {
     assert(options, validOptions)
 
     let params = new URLSearchParams(window.location.search)
+    if (!params.has('token')) {
+        let base = new URL(document.baseURI)
+        params = new URLSearchParams(base.search) // safari private mode workaround
+    }
     if (params.has('token')) {
         return true // make sure that isLoggedIn returns true during login process
     }
