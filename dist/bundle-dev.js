@@ -5594,8 +5594,8 @@
          *
          * @param document the context document.
          */
-        constructor({ document }) {
-          this.document = document;
+        constructor({ document: document2 }) {
+          this.document = document2;
           this.cache = new LRU({ max: MAX_ACTIVE_CONTEXTS });
         }
         getProcessed(activeCtx) {
@@ -13500,7 +13500,7 @@
     if (forwardedToken) {
       storage.set("id_token", forwardedToken);
       let cleanURL = new URL(window.location.href);
-      cleanURL.search = "";
+      cleanURL.searchParams.delete("token");
       history.replaceState({}, "", cleanURL.href);
     }
     const storedToken = storage.get("id_token", "");
@@ -13530,6 +13530,10 @@
     };
     assert3(options, validOptions);
     let params = new URLSearchParams(window.location.search);
+    if (!params.has("token")) {
+      let base = new URL(document.baseURI);
+      params = new URLSearchParams(base.search);
+    }
     if (params.has("token")) {
       return true;
     }
