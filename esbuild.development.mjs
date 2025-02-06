@@ -13,7 +13,7 @@ build({
 		".ts": "ts",
 		".tsx": "tsx"
 	},
-	tsconfig: "tsconfig.json", // Uses your TS config if present
+	tsconfig: "tsconfig.json",
 	plugins: [
 		polyfillNode({
 			crypto: true,
