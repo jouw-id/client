@@ -5,6 +5,7 @@ import {
   handleIncomingRedirect,
   ILoginInputOptions,
   ILogoutOptions,
+  Session as InruptSession,
   fetch as inruptFetch,
   login as inruptLogin,
 } from "@inrupt/solid-client-authn-browser";
@@ -28,7 +29,7 @@ async function getPod(webId: string): Promise<string> {
   });
 }
 
-export function initAuthentication(
+export async function initAuthentication(
   onAuthentication: (user: User) => void,
   onSessionRestore?: (url: string) => void
 ) {
@@ -38,7 +39,7 @@ export function initAuthentication(
     getDefaultSession().events.on(EVENTS.LOGIN, onSessionRestore as () => void);
   }
 
-  handleIncomingRedirect({
+  await handleIncomingRedirect({
     restorePreviousSession: true,
   }).then(async (sessionInfo) => {
     if (!sessionInfo) return undefined;
@@ -55,23 +56,46 @@ export function initAuthentication(
   });
 }
 
-export async function logIn(options: ILoginInputOptions) {
-  const isLoggedIn = getDefaultSession().info.isLoggedIn;
-  // TODO: check for current session and exp. date
-  if (!isLoggedIn) await inruptLogin(options);
+const validateSession = (session: InruptSession) => {
+  const {expirationDate = 0, isLoggedIn} = session.info
+  const hasAValidSession = new Date(expirationDate) > new Date()
+  return isLoggedIn && hasAValidSession
+};
+
+export function getUser(): User {
+  let user = {
+    webId: "",
+    isLoggedIn: false,
+    pod: "",
+  }
+
+  user = storage.get("user", user)
+
+  const session = getDefaultSession()
+  const isValid = validateSession(session)
+
+  if (!isValid) {
+    storage.remove("user")
+    return user
+  } else return user
 }
 
-export async function logOut(options: ILogoutOptions) {
+export function logIn(options: ILoginInputOptions) {
+  if (!getUser().isLoggedIn) inruptLogin(options);
+}
+
+export function logOut(options: ILogoutOptions) {
   const defaultOptions = {
     logoutType: "idp",
     postLogoutUrl: "https://jouw.id",
   };
+
   // Post logout urls must be set on the client config json in .db in the idp.
   // https://docs.inrupt.com/developer-tools/api/javascript/solid-client-authn-browser/classes/Session.html#logout
   // However currently that does not seem to be working, so in our nginx config we redirect all logged out users to https://jouw.id.
   // If more logout urls are required, we need to investigate what is going wrong with the post logout urls in the NSS.
 
-  await getDefaultSession().logout(options || defaultOptions);
+  return getDefaultSession()?.logout(options || defaultOptions);
 }
 
 export async function getFromPod(
