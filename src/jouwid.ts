@@ -99,25 +99,26 @@ export function logOut(options: ILogoutOptions) {
 }
 
 export async function getFromPod(
-  pod: string,
   schemaEntry: PodSchemaEntry
 ): Promise<unknown> {
-  return readResource(pod, schemaEntry);
+  const { pod } = getUser()
+  return pod ? readResource(pod, schemaEntry) : null;
 }
 
 export const deleteFromPod = async (
-  pod: string,
   schemaEntry: PodSchemaEntry
 ): Promise<boolean> => {
-  return deleteResource(pod, schemaEntry);
+  const { pod } = getUser()
+  return pod ? deleteResource(pod, schemaEntry) : false;
 };
 
 export const postToPod = async (
-  pod: string,
   schemaEntry: PodSchemaEntry,
   content: string,
   contentType: string = "application/ld+json"
-): Promise<Blob & WithResourceInfo> => {
+): Promise<Blob & WithResourceInfo | null> => {
+  const { pod } = getUser()
+  if (!pod) return null;
   try {
     return await writeResource(pod, schemaEntry, content, contentType);
   } catch (error: unknown) {
@@ -129,7 +130,7 @@ export const postToPod = async (
     };
     const statusCode = status || response?.status;
     if (statusCode === 409) {
-      await deleteFromPod(pod, schemaEntry);
+      await deleteFromPod(schemaEntry);
       return await writeResource(pod, schemaEntry, content, contentType);
       // Just throw the error for other status codes.
     } else throw error;
