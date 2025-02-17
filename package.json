@@ -28,6 +28,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/n3": "^1.21.1",
     "crypto-browserify": "^3.12.0",
     "esbuild": "^0.24.2",
     "esbuild-plugin-polyfill-node": "^0.3.0",
@@ -47,6 +48,6 @@
     "@inrupt/solid-client": "^2.1.2",
     "@inrupt/solid-client-authn-browser": "^2.2.6",
     "@muze-nl/assert": "^0.3.3",
-    "n3": "^1.22.3"
+    "n3": "^1.23.1"
   }
 }
