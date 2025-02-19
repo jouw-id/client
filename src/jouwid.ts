@@ -29,6 +29,8 @@ async function getPod(webId: string): Promise<string> {
   });
 }
 
+export type LoginOptions = ILoginInputOptions;
+
 export async function initAuthentication(
   onAuthentication: (user: User) => void,
   onSessionRestore?: (url: string) => void
@@ -80,7 +82,7 @@ export function getUser(): User {
   } else return user
 }
 
-export function logIn(options: ILoginInputOptions) {
+export function logIn(options: LoginOptions) {
   if (!getUser().isLoggedIn) inruptLogin(options);
 }
 
