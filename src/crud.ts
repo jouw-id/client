@@ -1,6 +1,5 @@
 // import { assert, Required, Optional, validURL } from "@muze-nl/assert";
 // import { assert, Required, Optional, validURL } from "@muze-nl/assert";
-import { WithResourceInfo } from "@inrupt/solid-client";
 import { deleteResource, readResource, writeResource } from "./utils/api";
 import { PodSchemaEntry } from "./utils/podschema";
 import { getUser } from "./getUser";
@@ -23,7 +22,7 @@ export const postToPod = async (
   schemaEntry: PodSchemaEntry,
   content: string,
   contentType: string = "application/ld+json"
-): Promise<(Blob & WithResourceInfo) | null> => {
+): Promise<(Blob) | null> => {
   const { pod } = getUser();
   if (!pod) return null;
   try {
