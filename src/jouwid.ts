@@ -17,9 +17,9 @@ import { WithResourceInfo } from "@inrupt/solid-client";
 import { deleteResource, readResource, writeResource } from "./utils/api";
 import { PodSchemaEntry } from "./utils/podschema";
 
-async function getPod(webId: string): Promise<string> {
-  const profile = await (await inruptFetch(webId)).text();
-  const parser = new Parser({ baseIRI: webId });
+async function getPod(userWebId: string): Promise<string> {
+  const profile = await (await inruptFetch(userWebId)).text();
+  const parser = new Parser({ baseIRI: userWebId });
   return new Promise((resolve) => {
     parser.parse(profile, (error, quad) => {
       if (quad?.predicate?.value == "http://www.w3.org/ns/pim/space#storage") {

@@ -27196,9 +27196,9 @@ var deleteResource = async (pod, resourceId) => {
 };
 
 // src/jouwid.ts
-async function getPod(webId) {
-  const profile = await (await fetch$1(webId)).text();
-  const parser = new N3Parser({ baseIRI: webId });
+async function getPod(userWebId) {
+  const profile = await (await fetch$1(userWebId)).text();
+  const parser = new N3Parser({ baseIRI: userWebId });
   return new Promise((resolve) => {
     parser.parse(profile, (error, quad2) => {
       if (quad2?.predicate?.value == "http://www.w3.org/ns/pim/space#storage") {
