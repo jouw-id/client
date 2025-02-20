@@ -7,7 +7,7 @@
     "rootDir": "src",
     "allowImportingTsExtensions": false,
     "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "node",
   },
   "include": ["src", "global.d.ts"],
   "exclude": ["node_modules", "dist"]
