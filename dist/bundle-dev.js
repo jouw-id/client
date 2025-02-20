@@ -19890,6 +19890,16 @@ init_buffer2();
 init_process2();
 
 // src/jouwid.ts
+var jouwid_exports = {};
+__export(jouwid_exports, {
+  deleteFromPod: () => deleteFromPod,
+  getFromPod: () => getFromPod,
+  getUser: () => getUser,
+  initAuthentication: () => initAuthentication,
+  logIn: () => logIn,
+  logOut: () => logOut,
+  postToPod: () => postToPod
+});
 init_dirname();
 init_buffer2();
 init_process2();
@@ -27280,18 +27290,7 @@ var postToPod = async (schemaEntry, content, contentType = "application/ld+json"
 };
 
 // src/browser.ts
-globalThis.jouwid = {
-  initAuthentication,
-  logIn,
-  logOut,
-  getFromPod,
-  deleteFromPod,
-  postToPod
-  // isLoggedIn,
-  // getProtectedResource,
-  // trustApp,
-  // revokeApp,
-};
+globalThis.jouwid = jouwid_exports;
 /*! Bundled license information:
 
 @jspm/core/nodelibs/browser/chunk-DtuTasat.js:

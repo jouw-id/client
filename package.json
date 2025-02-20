@@ -1,17 +1,17 @@
 {
   "name": "@jouw-id/client",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "client for jouw.id",
   "type": "module",
-  "source": [
-    "src/browser.ts"
-  ],
-  "main": "src/jouwid.ts",
+  "browser": "dist/bundle.js",
+  "types": "dist/jouwid.d.ts", 
   "scripts": {
     "test": "tap test/*.mjs",
     "tap": "tap",
+    "prebuild": "pnpm run lint && pnpm run typecheck && pnpm run build:types",
     "build": "node ./esbuild.production.mjs",
     "build-dev": "node ./esbuild.development.mjs",
+    "build:types": "tsc --declaration src/jouwid.ts --emitDeclarationOnly --skipLibCheck --outDir ./dist",
     "wp-build": "webpack --config webpack.config.cjs",
     "format": "pnpm run lint:js --fix",
     "lint": "pnpm run lint:js && pnpm run lint:tsc",

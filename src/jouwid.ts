@@ -97,7 +97,7 @@ export function logOut(options: ILogoutOptions) {
   // However currently that does not seem to be working, so in our nginx config we redirect all logged out users to https://jouw.id.
   // If more logout urls are required, we need to investigate what is going wrong with the post logout urls in the NSS.
 
-  return getDefaultSession()?.logout(options || defaultOptions);
+  return getDefaultSession()?.logout((options || defaultOptions) as ILogoutOptions);
 }
 
 export async function getFromPod(
