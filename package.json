@@ -4,20 +4,9 @@
   "description": "client for jouw.id",
   "type": "module",
   "browser": "dist/bundle.js",
-  "types": "dist/jouwid.d.ts", 
+  "types": "dist/jouwid.d.ts",
   "scripts": {
-    "test": "tap test/*.mjs",
-    "tap": "tap",
-    "prebuild": "pnpm run lint && pnpm run typecheck && pnpm run build:types",
-    "build": "node ./esbuild.production.mjs",
-    "build-dev": "node ./esbuild.development.mjs",
-    "build:types": "tsc --declaration src/jouwid.ts --emitDeclarationOnly --skipLibCheck --outDir ./dist",
-    "wp-build": "webpack --config webpack.config.cjs",
-    "format": "pnpm run lint:js --fix",
-    "lint": "pnpm run lint:js && pnpm run lint:tsc",
-    "lint:js": "eslint . --max-warnings 0",
-    "lint:tsc": "pnpm run typecheck",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "build": "tsup src/index.ts --format cjs, esm --dts"
   },
   "repository": {
     "type": "git",
@@ -48,6 +37,7 @@
     "@inrupt/solid-client": "^2.1.2",
     "@inrupt/solid-client-authn-browser": "^2.2.6",
     "@muze-nl/assert": "^0.3.3",
-    "n3": "^1.23.1"
+    "n3": "^1.23.1",
+    "tsup": "^8.3.6"
   }
 }
