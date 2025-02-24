@@ -4,6 +4,7 @@ const partiallyTypedPodSchema = {
   profile: `${STORAGE_ROOT}/basicProfile.jsonld`,
   shows: `${STORAGE_ROOT}/talpa/interest.jsonld`,
   themes: `${STORAGE_ROOT}/npo/themes.jsonld`,
+  clothingSize: `${STORAGE_ROOT}/clothingSize.jsonld`,
   contentConsent: `${STORAGE_ROOT}/consent/personalised-content.json`,
   adsConsent: `${STORAGE_ROOT}/consent/ads.json`,
 } as const;

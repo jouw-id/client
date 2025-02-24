@@ -8,5 +8,5 @@ import { getUser } from "./getUser";
 export type LoginOptions = ILoginInputOptions;
 
 export function logIn(options: LoginOptions) {
-  if (!getUser().isLoggedIn) inruptLogin(options);
+  if (!getUser().isLoggedIn) return inruptLogin(options);
 }
