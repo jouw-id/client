@@ -1,0 +1,14 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "strict": true,
+    "allowJs": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "allowImportingTsExtensions": false,
+    "module": "ESNext",
+    "moduleResolution": "node",
+  },
+  "include": ["src", "global.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

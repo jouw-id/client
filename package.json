@@ -1,31 +1,28 @@
 {
   "name": "@jouw-id/client",
-  "version": "0.3.2",
+  "version": "0.5.3",
   "description": "client for jouw.id",
   "type": "module",
-  "source": [
-    "src/browser.mjs"
-  ],
-  "main": "src/jouwid.mjs",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "tap test/*.mjs",
-    "tap": "tap",
-    "build": "node ./esbuild.production.mjs",
-    "build-dev": "node ./esbuild.development.mjs",
-    "wp-build": "webpack --config webpack.config.cjs",
-    "eslint": "eslint src/jouwid.mjs"
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jouw-id/client.git"
   },
-  "author": "auke@muze.nl",
+  "author": "lennart@datakluis.nl",
   "homepage": "https://jouw.id/",
   "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/n3": "^1.21.1",
     "crypto-browserify": "^3.12.0",
+    "esbuild": "^0.24.2",
     "esbuild-plugin-polyfill-node": "^0.3.0",
-    "eslint": "^9.13.0",
-    "@eslint/js": "^9.13.0",
     "stream-browserify": "^3.0.0",
     "tap": "^16.0.1",
     "url": "^0.11.4",
@@ -39,7 +36,10 @@
     "/README.md"
   ],
   "dependencies": {
-    "@datavillage-me/api": "^1.1.2",
-    "@muze-nl/assert": "^0.3.3"
+    "@inrupt/solid-client": "^2.1.2",
+    "@inrupt/solid-client-authn-browser": "^2.2.6",
+    "@muze-nl/assert": "^0.3.3",
+    "n3": "^1.23.1",
+    "tsup": "^8.3.6"
   }
 }
