@@ -1,5 +1,5 @@
 
-import * as jouwid from './jouwid';
+import * as jouwid from './index';
 
 declare let globalThis: {
   jouwid: typeof jouwid;
