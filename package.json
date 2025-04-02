@@ -17,8 +17,8 @@
   "author": "lennart@datakluis.nl",
   "homepage": "https://jouw.id/",
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@jouw-id/eslint-config": "workspace:*",
+    "@jouw-id/typescript-config": "workspace:*",
     "@types/n3": "^1.21.1",
     "crypto-browserify": "^3.12.0",
     "esbuild": "^0.24.2",
