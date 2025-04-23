@@ -1,5 +1,5 @@
 {
-  "extends": "@jouw-id/typescript-config/base.json",
+  "extends": "@jouw-id/config/typescript/base.json",
   "compilerOptions": {
     "strict": true,
     "allowJs": true,

@@ -17,8 +17,6 @@
   "author": "lennart@datakluis.nl",
   "homepage": "https://jouw.id/",
   "devDependencies": {
-    "@jouw-id/eslint-config": "workspace:*",
-    "@jouw-id/typescript-config": "workspace:*",
     "@types/n3": "^1.24.2",
     "crypto-browserify": "^3.12.1",
     "esbuild": "^0.24.2",
@@ -36,10 +34,13 @@
     "/README.md"
   ],
   "dependencies": {
-    "@inrupt/solid-client": "^2.1.2",
-    "@inrupt/solid-client-authn-browser": "^2.3.0",
     "@muze-nl/assert": "^0.3.3",
     "n3": "^1.24.2",
     "tsup": "^8.4.0"
+  },
+  "peerDependencies": {
+    "@jouw-id/config": "workspace:*",
+    "@inrupt/solid-client": "^2.1.2",
+    "@inrupt/solid-client-authn-browser": "~2.3.0"
   }
 }
