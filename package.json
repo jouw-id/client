@@ -1,6 +1,6 @@
 {
   "name": "@jouw-id/client",
-  "version": "0.5.3",
+  "version": "1.0.3",
   "description": "client for jouw.id",
   "type": "module",
   "main": "./dist/index.cjs",
